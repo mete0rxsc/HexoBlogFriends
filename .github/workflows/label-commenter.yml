@@ -6,6 +6,20 @@ on:
       - labeled
       - unlabeled
 
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  deployments: read
+  issues: write
+  discussions: read
+  packages: read
+  pages: read
+  pull-requests: write
+  repository-projects: read
+  security-events: read
+  statuses: read
+
 jobs:
   comment:
     runs-on: ubuntu-latest
