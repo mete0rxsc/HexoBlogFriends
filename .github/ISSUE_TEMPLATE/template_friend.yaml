@@ -6,7 +6,7 @@ body:
     id: checks
     attributes:
       label: 检查清单
-      description: 请认真检查以下清单中的每一项，并在相符的项前打勾。（在真实满足所有条件后才会通过，不满足的项请不要勾选）
+      description: 请认真检查以下清单中的每一项，并在相符的项前打勾。**（在真实满足所有条件后才会通过，不满足的项请不要勾选，不是必须要勾选全部，但诚实勾选会增加审核通过率）**
       options:
         - required: true
           label: 合法的、非营利性、无商业广告、无木马植入。
@@ -55,7 +55,7 @@ body:
     attributes:
       label: 友链地址
       description: 请输入您的友链页面地址，用于人工审核和 GitHub Actions 自动检测。（不必提前添加本站为友链，审核通过后再添加也不迟。）
-      placeholder: "如: https://xaoxuu.com/friends/"
+      placeholder: "如: https://www.xscnet.cn/links/"
     validations:
       required: true
   - type: input
@@ -63,4 +63,4 @@ body:
     attributes:
       label: 友链仓库（可选）
       description: 如果您使用 issue 作为友链源，请附上 issue 仓库链接，博主将会前往您的仓库自行填写友链。
-      placeholder: "如: https://github.com/xaoxuu/friends/"
+      placeholder: "如: https://github.com/mete0rxsc/HexoBlogFriends"
