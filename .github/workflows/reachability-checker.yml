@@ -53,3 +53,46 @@ jobs:
           git add --all
           git commit -m "Update data from issues" || echo "No changes to commit"
           git push -f origin output
+      # 添加这个新步骤来触发同步
+      - name: Trigger Aliyun Sync
+        id: trigger-sync
+        if: success()
+        continue-on-error: true
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          HTTP_RESPONSE=$(curl -s -w "%{http_code}" -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token $PAT_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{"event_type":"trigger-sync"}' \
+            -o response.txt)
+    
+          if [ "$HTTP_RESPONSE" = "204" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      # 发送通知邮件
+      - name: Send notification email
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: ${{ steps.trigger-sync.outputs.status == 'success' && '✅' || '❌' }} 友链同步 ${{ steps.trigger-sync.outputs.status == 'success' && '成功' || '失败' }}
+          to: ${{ secrets.MAIL_TO }}
+          from: GitHub Actions
+          body: |
+            仓库: ${{ github.repository }}
+            状态: ${{ steps.trigger-sync.outputs.status == 'success' && '✅ 成功' || '❌ 失败' }}
+            触发者: ${{ github.actor }}
+            触发时间: ${{ github.event.repository.updated_at }}
+            运行ID: ${{ github.run_id }}
+      
+            查看详情: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
