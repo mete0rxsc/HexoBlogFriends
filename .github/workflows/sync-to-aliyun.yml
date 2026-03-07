@@ -1,21 +1,14 @@
 name: Sync to Aliyun Server
 
 on:
+  repository_dispatch:
+    types: [trigger-sync]  # 自定义事件类型
   workflow_dispatch:
   push:
     branches:
       - output
     paths:
       - 'v2/data.json'
-  # 添加 workflow_run 触发器
-  workflow_run:
-    workflows: 
-      - "Reachability Checker"  # 注意：必须和 reachability-checker.yml 的 name 完全一致
-      - "Feed Posts Parser"      # 也可以监听其他修改数据的 workflow
-    types:
-      - completed
-    branches:
-      - output
 
 jobs:
   sync-to-aliyun:
