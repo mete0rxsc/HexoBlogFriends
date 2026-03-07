@@ -19,7 +19,7 @@ body:
         - required: false
           label: 博客已持续运行至少3年。（在真实满足后才会通过，不满足时请不要勾选）
         - required: false
-          label: 先友后链：与博主有至少**1年**的双向有效互动，例如互相留言评论、issue、PR等。（在真实满足后才会通过，不满足时请不要勾选）
+          label: 先友后链：与博主有至少**1年**的双向有效互动，例如互相留言评论、issue、PR等(此项不一定需要满足，只需硬性满足1，2项目即可)。（在真实满足后才会通过，不满足时请不要勾选）
   - type: textarea
     id: json-data
     validations:
