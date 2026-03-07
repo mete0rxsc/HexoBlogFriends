@@ -1,0 +1,100 @@
+name: Sync to Aliyun Server
+
+on:
+  push:
+    branches:
+      - output
+    paths:
+      - 'v2/data.json'  # 只有当v2/data.json文件发生变化时才触发
+
+jobs:
+  sync-to-aliyun:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout output branch
+        uses: actions/checkout@v4
+        with:
+          ref: output
+          fetch-depth: 1
+      
+      - name: Verify data.json exists
+        run: |
+          if [ -f "v2/data.json" ]; then
+            echo "✅ data.json found, size: $(wc -c < v2/data.json) bytes"
+            echo "File preview:"
+            head -n 5 v2/data.json
+          else
+            echo "❌ Error: v2/data.json not found!"
+            exit 1
+          fi
+      
+      - name: Sync file to Aliyun server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        id: scp-sync
+        with:
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          port: ${{ secrets.ALIYUN_PORT }}
+          source: "v2/data.json"
+          target: "/home/linksdata/"
+          strip_components: 1  # 移除v2/目录前缀，直接将data.json放到目标目录
+          overwrite: true
+          rm: false
+      
+      - name: Verify sync status
+        run: |
+          echo "✅ Sync completed successfully"
+          echo "File synced to: /home/linksdata/data.json"
+      
+      - name: Send success email notification
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "✅ GitHub Actions: 友链数据同步成功"
+          to: ${{ secrets.MAIL_TO }}
+          from: GitHub Actions
+          body: |
+            GitHub Actions 友链数据同步任务执行成功！
+            
+            仓库: ${{ github.repository }}
+            分支: ${{ github.ref }}
+            触发时间: ${{ github.event.head_commit.timestamp }}
+            提交信息: ${{ github.event.head_commit.message }}
+            提交者: ${{ github.event.head_commit.author.name }}
+            
+            文件已同步到: /home/linksdata/data.json
+            文件大小: $(wc -c < v2/data.json) 字节
+            
+            查看详情: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      
+      - name: Send failure email notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "❌ GitHub Actions: 友链数据同步失败"
+          to: ${{ secrets.MAIL_TO }}
+          from: GitHub Actions
+          body: |
+            GitHub Actions 友链数据同步任务执行失败！
+            
+            仓库: ${{ github.repository }}
+            分支: ${{ github.ref }}
+            触发时间: ${{ github.event.head_commit.timestamp }}
+            
+            请检查以下可能的原因：
+            1. SSH连接问题（服务器是否在线？）
+            2. 权限问题（目标目录是否存在且可写？）
+            3. 文件路径问题（v2/data.json是否存在？）
+            
+            查看详细日志: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
