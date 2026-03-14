@@ -41,8 +41,8 @@ feed: https://www.xscnet.cn/atom.xml
 
 1. 进入[issues模板页面](https://github.com/mete0rxsc/HexoBlogFriends/issues)  
 2. 找到您网站所对应 issues ，点击编辑按钮如下图  
-[网站所对应issues](/img/0001.png)  
+![网站所对应issues](/img/0001.png)  
 3. 点击Edit编辑按钮  
-[编辑按钮](/img/0002.png)  
+![编辑按钮](/img/0002.png)  
 4.直接修改您需要修改的对应字段，并等待下一次的Action自动部署即可生效。
-[修改字段](/img/0003.png)
+![修改字段](/img/0003.png)  
