@@ -50,31 +50,31 @@ jobs:
           echo "✅ Sync completed successfully"
           echo "File synced to: /home/linksdata/data.json"
       
-      - name: Send success email notification
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.qq.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "✅ GitHub Actions: 友链数据同步成功"
-          to: ${{ secrets.MAIL_TO }}
-          from: GitHub Actions
-          body: |
-            GitHub Actions 友链数据同步任务执行成功！
+      #- name: Send success email notification
+        #if: success()
+        #uses: dawidd6/action-send-mail@v3
+        #with:
+          #server_address: smtp.qq.com
+          #server_port: 465
+          #secure: true
+          #username: ${{ secrets.MAIL_USERNAME }}
+          #password: ${{ secrets.MAIL_PASSWORD }}
+          #subject: "✅ GitHub Actions: 友链数据同步成功"
+          #to: ${{ secrets.MAIL_TO }}
+          #from: GitHub Actions
+          #body: |
+            #GitHub Actions 友链数据同步任务执行成功！
             
-            仓库: ${{ github.repository }}
-            分支: ${{ github.ref }}
-            触发时间: ${{ github.event.head_commit.timestamp }}
-            提交信息: ${{ github.event.head_commit.message }}
-            提交者: ${{ github.event.head_commit.author.name }}
+            #仓库: ${{ github.repository }}
+            #分支: ${{ github.ref }}
+            #触发时间: ${{ github.event.head_commit.timestamp }}
+            #提交信息: ${{ github.event.head_commit.message }}
+            #提交者: ${{ github.event.head_commit.author.name }}
             
-            文件已同步到: /home/linksdata/data.json
-            文件大小: $(wc -c < v2/data.json) 字节
+            #文件已同步到: /home/linksdata/data.json
+            #文件大小: $(wc -c < v2/data.json) 字节
             
-            查看详情: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            #查看详情: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       
       #- name: Send failure email notification
         #if: failure()
